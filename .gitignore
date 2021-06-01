@@ -1,6 +1,9 @@
 # Idea
 .idea
 
+# Dist
+*/dist
+
 # Logs
 logs
 
