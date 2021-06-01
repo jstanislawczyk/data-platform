@@ -1,0 +1,21 @@
+{
+  "name": "data-generator",
+  "version": "1.0.0",
+  "description": "Simple IoT device data generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc",
+    "start": "npm run compile && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mqtt": "^4.2.6",
+    "typescript": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^15.6.1"
+  }
+}
