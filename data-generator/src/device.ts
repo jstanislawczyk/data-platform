@@ -1,5 +1,5 @@
-import {Location} from "./location";
-import {DeviceType} from "./device-type";
+import {Location} from './location';
+import {DeviceType} from './device-type';
 
 export class Device {
     public id: string;

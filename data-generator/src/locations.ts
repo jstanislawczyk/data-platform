@@ -1,6 +1,6 @@
-import {Location} from "./location";
+import {Location} from './location';
 
-export const locations: Location = {
+export const location: Location = {
         id: '1',
         name: 'Rzeszów',
         width: 10,
