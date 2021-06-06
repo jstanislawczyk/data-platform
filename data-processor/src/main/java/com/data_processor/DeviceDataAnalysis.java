@@ -1,7 +1,7 @@
 package com.data_processor;
 
-import com.data_processor.clients.WebsocketClient;
 import com.data_processor.clients.MqttSourceClient;
+import com.data_processor.clients.WebsocketClient;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -27,8 +27,10 @@ public class DeviceDataAnalysis {
                         .ofNullable(System.getenv("WEBSOCKET_URL"))
                         .orElse("ws://localhost:3000");
                 final WebSocketClient client = new WebsocketClient(new URI(websocketUrl));
+
                 client.connectBlocking();
                 client.send(value);
+                client.close();
             });
 
         env.execute("Device data analysis");
