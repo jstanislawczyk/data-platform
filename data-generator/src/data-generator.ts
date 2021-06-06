@@ -47,6 +47,9 @@ export class DataGenerator {
                                 case 'K':
                                     deviceEvent.value = (Math.random()*(303 - 293) + 293).toFixed(1);
                                     break;
+                                case 'F':
+                                    deviceEvent.value = (Math.random()*(86 - 68) + 86).toFixed(1);
+                                    break;
                             }
                         }
 
