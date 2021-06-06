@@ -1,4 +1,4 @@
-package com.data_processor.sources;
+package com.data_processor.clients;
 
 import org.apache.flink.api.common.functions.StoppableFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
@@ -7,13 +7,13 @@ import org.eclipse.paho.client.mqttv3.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-public class MQTTSource implements SourceFunction<String>, StoppableFunction {
+public class MqttSourceClient implements SourceFunction<String>, StoppableFunction {
 
     private transient MqttClient client;
     private transient volatile boolean running;
     private transient Object waitLock;
 
-    public MQTTSource() {
+    public MqttSourceClient() {
     }
 
     @Override

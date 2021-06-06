@@ -1,6 +1,7 @@
 package com.data_processor;
 
-import com.data_processor.sources.MQTTSource;
+import com.data_processor.clients.WebsocketClient;
+import com.data_processor.clients.MqttSourceClient;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -15,9 +16,9 @@ public class DeviceDataAnalysis {
 
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironment();
-        final MQTTSource mqttSource = new MQTTSource();
-        final DataStreamSource<String> tempratureDataSource = env.addSource(mqttSource);
-        final DataStream<String> stream = tempratureDataSource.map((MapFunction<String, String>) data -> data);
+        final MqttSourceClient mqttSourceClient = new MqttSourceClient();
+        final DataStreamSource<String> dataSource = env.addSource(mqttSourceClient);
+        final DataStream<String> stream = dataSource.map((MapFunction<String, String>) data -> data);
 
         stream.print();
         stream
@@ -25,7 +26,7 @@ public class DeviceDataAnalysis {
                 final String websocketUrl = Optional
                         .ofNullable(System.getenv("WEBSOCKET_URL"))
                         .orElse("ws://localhost:3000");
-                final WebSocketClient client = new EmptyClient(new URI(websocketUrl));
+                final WebSocketClient client = new WebsocketClient(new URI(websocketUrl));
                 client.connectBlocking();
                 client.send(value);
             });

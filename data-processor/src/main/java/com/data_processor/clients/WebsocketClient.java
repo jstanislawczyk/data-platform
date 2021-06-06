@@ -1,4 +1,4 @@
-package com.data_processor;
+package com.data_processor.clients;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -6,9 +6,9 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.nio.ByteBuffer;
 
-public class EmptyClient extends WebSocketClient {
+public class WebsocketClient extends WebSocketClient {
 
-    public EmptyClient(URI serverURI) {
+    public WebsocketClient(URI serverURI) {
         super(serverURI);
     }
 
