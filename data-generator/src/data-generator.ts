@@ -45,10 +45,10 @@ export class DataGenerator {
                                     deviceEvent.value = (Math.random() * (30 - 20) + 20).toFixed(1);
                                     break;
                                 case 'K':
-                                    deviceEvent.value = (Math.random()*(303 - 293) + 293).toFixed(1);
+                                    deviceEvent.value = (Math.random() * (303 - 293) + 293).toFixed(1);
                                     break;
                                 case 'F':
-                                    deviceEvent.value = (Math.random()*(86 - 68) + 86).toFixed(1);
+                                    deviceEvent.value = (Math.random() * (86 - 68) + 86).toFixed(1);
                                     break;
                             }
                         }
@@ -58,10 +58,10 @@ export class DataGenerator {
 
                             switch (deviceEvent.device.unit) {
                                 case 'hPa':
-                                    deviceEvent.value = Math.floor(Math.random()*(1050 - 950) + 950).toString();
+                                    deviceEvent.value = Math.floor(Math.random() * (1050 - 950) + 950).toString();
                                     break;
                                 case 'atm':
-                                    deviceEvent.value = (Math.random()*(1.04 - 0.94) + 0.94).toFixed(2);
+                                    deviceEvent.value = (Math.random() * (1.04 - 0.94) + 0.94).toFixed(2);
                                     break;
                             }
                         }

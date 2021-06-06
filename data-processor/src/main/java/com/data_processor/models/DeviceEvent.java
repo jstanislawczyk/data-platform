@@ -6,6 +6,7 @@ public class DeviceEvent {
 
     public String id;
     public String value;
+    public String readingUnit;
     public long timestamp;
     public Device device;
 
@@ -23,6 +24,14 @@ public class DeviceEvent {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getReadingUnit() {
+        return readingUnit;
+    }
+
+    public void setReadingUnit(String readingUnit) {
+        this.readingUnit = readingUnit;
     }
 
     public long getTimestamp() {
@@ -46,21 +55,23 @@ public class DeviceEvent {
         return "DeviceEvent{" +
                 "id='" + id + '\'' +
                 ", value='" + value + '\'' +
+                ", readingUnit='" + readingUnit + '\'' +
                 ", timestamp=" + timestamp +
                 ", device=" + device +
                 '}';
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        DeviceEvent that = (DeviceEvent) object;
-        return timestamp == that.timestamp && id.equals(that.id) && value.equals(that.value) && device.equals(that.device);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeviceEvent that = (DeviceEvent) o;
+        return timestamp == that.timestamp && id.equals(that.id) && value.equals(that.value) &&
+                Objects.equals(readingUnit, that.readingUnit) && device.equals(that.device);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value, timestamp, device);
+        return Objects.hash(id, value, readingUnit, timestamp, device);
     }
 }

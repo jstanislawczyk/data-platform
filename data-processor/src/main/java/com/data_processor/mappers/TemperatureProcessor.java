@@ -6,6 +6,8 @@ import com.data_processor.models.DeviceEvent;
 public class TemperatureProcessor {
 
     public DeviceEvent process(final DeviceEvent deviceEvent) {
+        deviceEvent.readingUnit = deviceEvent.device.unit;
+
         if (deviceEvent.device.type.equals(DeviceType.TEMPERATURE.toString())) {
             this.mapTemperatureValueByUnit(deviceEvent);
         }
