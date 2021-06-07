@@ -5,38 +5,40 @@
         <h1>Data panel</h1>
       </header>
 
-      <section class="devices-quantity">
+      <section class="device-info">
         <h3>
-          Devices quantity
+          General
         </h3>
-        <p>4 {{message}}</p>
+        <p>Devices quantity: {{ devices.size }}</p>
       </section>
 
-      <section class="devices-list">
+      <section class="device-info">
         <h3>
           Devices list
         </h3>
+        <div
+          v-for="[deviceId, device] in devices"
+          :key="deviceId"
+          class="device"
+        >
+          <p>Name: {{ device.name }}</p>
+          <p>Type: {{ device.type.toLowerCase().trim() }}</p>
+          <p>Unit: {{ device.unit }}</p>
+        </div>
       </section>
     </section>
 
     <section class="chart-panel">
       <div class="chart">
-        <div class="small">
-          <line-chart :chart-data="dataCollection"></line-chart>
-          <button @click="fillData()">Randomize</button>
-        </div>
+        <line-chart :chart-data="temperatureChart" :options="chartOptions"></line-chart>
       </div>
 
       <div class="chart">
-
+        <line-chart :chart-data="humidityChart" :options="chartOptions"></line-chart>
       </div>
 
       <div class="chart">
-
-      </div>
-
-      <div class="chart">
-
+        <line-chart :chart-data="pressureChart" :options="chartOptions"></line-chart>
       </div>
     </section>
   </main>
@@ -53,41 +55,99 @@ export default {
   data () {
     return {
       message: 'Unknown',
-      dataCollection: null
+      dataCollection: {},
+      temperatureChart: {},
+      pressureChart: {},
+      humidityChart: {},
+      devices: new Map(),
+      locations: new Map(),
+      readings: new Map(),
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
     }
-  },
-  mounted () {
-    this.fillData()
   },
   created: function () {
     console.log('Websocket client init')
-    // const socket = new WebSocket('ws://localhost:3000')
-    //
-    // // Listen for messages
-    // socket.addEventListener('message', (event) => {
-    //   console.log(`Message from server: ${event.data}`)
-    //   this.message = event.data
-    // })
+    const socket = new WebSocket('ws://localhost:3000')
+
+    // Listen for messages
+    socket.addEventListener('message', (event) => {
+      const parsedMessage = JSON.parse(event.data)
+
+      if (parsedMessage.messageType !== 'INFO') {
+        const deviceEvent = JSON.parse(parsedMessage.payload)
+
+        this.message = deviceEvent.device
+        this.addDevice(deviceEvent.device)
+        this.addLocation(deviceEvent.device.location)
+        this.addReadings(deviceEvent)
+      }
+    })
   },
   methods: {
-    fillData () {
-      this.dataCollection = {
-        labels: [this.getRandomInt(), this.getRandomInt()],
-        datasets: [
-          {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [this.getRandomInt(), this.getRandomInt()]
-          }, {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [this.getRandomInt(), this.getRandomInt()]
-          }
-        ]
+    addDevice (device) {
+      this.devices = new Map(this.devices.set(device.id, device))
+    },
+    addLocation (location) {
+      this.locations = new Map(this.locations.set(location.id, location))
+    },
+    addReadings (deviceEvent) {
+      const deviceId = deviceEvent.device.id
+      const reading = {
+        id: deviceEvent.id,
+        value: deviceEvent.value,
+        readingUnit: deviceEvent.readingUnit,
+        timestamp: deviceEvent.timestamp
+      }
+
+      const readings = this.readings.get(deviceId) || []
+      readings.push(reading)
+      readings.sort((firstReading, secondReading) => firstReading.date - secondReading.date)
+
+      if (readings.length > 50) {
+        readings.shift()
+      }
+
+      this.readings = new Map(this.readings.set(deviceId, readings))
+      if (deviceEvent.device.unit === 'C') {
+        this.temperatureChart = {
+          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
+          datasets: [
+            {
+              label: `Temperature [${deviceEvent.readingUnit}]`,
+              backgroundColor: '#f87979',
+              data: readings.map(reading => Number(reading.value))
+            }
+          ]
+        }
+      } else if (deviceEvent.device.unit === 'hPa') {
+        this.pressureChart = {
+          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
+          datasets: [
+            {
+              label: `Pressure [${deviceEvent.readingUnit}]`,
+              backgroundColor: '#2bac59',
+              data: readings.map(reading => Number(reading.value))
+            }
+          ]
+        }
+      } else {
+        this.humidityChart = {
+          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
+          datasets: [
+            {
+              label: `Humidity [${deviceEvent.readingUnit}]`,
+              backgroundColor: '#3aa9b8',
+              data: readings.map(reading => Number(reading.value))
+            }
+          ]
+        }
       }
     },
-    getRandomInt () {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5
+    getFormattedTime (timestamp) {
+      return new Date(timestamp).toTimeString().slice(0, 9)
     }
   }
 }
@@ -100,30 +160,48 @@ export default {
   }
 
   .device-panel {
-    width: 35%;
+    width: 30%;
     border-right: 1px;
     background: linear-gradient(180deg, rgba(73,92,198,1) 0%, rgba(122,103,217,1) 100%);;
-
-    h3 {
-      color: #FFF;
-    }
 
     header {
       margin: 20px 0 60px;
 
       h1 {
+        width: 90%;
+        margin: auto;
+        padding: 15px 0;
+        border: 2px solid #FFF;
+        font-size: 60px;
         color: #FFF;
       }
     }
 
-    .devices-quantity {
-      margin-bottom: 60px;
+    h3 {
+      width: 70%;
+      margin: 0 auto 30px;
+      padding: 10px 0;
+      border: 1px solid #FFF;
+      color: #FFF;
+    }
+
+    .device-info {
+      margin: 0 auto 60px;
 
       p {
-        margin-top: 10px;
+        margin: 20px 0;
         color: #FFF;
-        font-weight: bold;
         font-size: 18px;
+      }
+
+      .device {
+        width: 60%;
+        margin: 10px auto;
+        border-bottom: 1px solid #FFF;
+
+        &:last-child {
+          border-bottom: none;
+        }
       }
     }
   }
@@ -137,8 +215,10 @@ export default {
 
     .chart {
       width: 45%;
+      height: 45%;
       min-width: 200px;
       min-height: 300px;
+      max-height: 400px;
       border: 1px solid #000;
     }
   }

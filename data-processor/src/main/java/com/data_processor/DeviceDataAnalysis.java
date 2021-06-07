@@ -1,8 +1,9 @@
 package com.data_processor;
 
 import com.data_processor.clients.MqttSourceClient;
-import com.data_processor.mappers.PressureProcessor;
-import com.data_processor.mappers.TemperatureProcessor;
+import com.data_processor.processor.HumidityProcessor;
+import com.data_processor.processor.PressureProcessor;
+import com.data_processor.processor.TemperatureProcessor;
 import com.data_processor.models.DeviceEvent;
 import com.data_processor.publishers.WebsocketPublisher;
 import com.google.gson.Gson;
@@ -36,6 +37,10 @@ public class DeviceDataAnalysis {
             .map(deviceEvent -> {
                 final PressureProcessor pressureProcessor = new PressureProcessor();
                 return pressureProcessor.process(deviceEvent);
+            })
+            .map(deviceEvent -> {
+                final HumidityProcessor humidityProcessor = new HumidityProcessor();
+                return humidityProcessor.process(deviceEvent);
             })
             .addSink((SinkFunction<DeviceEvent>) deviceEvent -> {
                 final WebsocketPublisher websocketPublisher = new WebsocketPublisher();

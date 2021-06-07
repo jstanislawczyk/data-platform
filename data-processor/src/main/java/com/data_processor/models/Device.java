@@ -4,14 +4,14 @@ import java.util.Objects;
 
 public class Device {
 
-    public String id;
-    public String name;
-    public String type;
-    public String unit;
-    public String macAddress;
-    public double widthCoordinate;
-    public double lengthCoordinate;
-    public Location location;
+    private String id;
+    private String name;
+    private String type;
+    private String unit;
+    private String macAddress;
+    private double widthCoordinate;
+    private double lengthCoordinate;
+    private Location location;
 
     public String getId() {
         return id;

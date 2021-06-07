@@ -1,4 +1,4 @@
-package com.data_processor.mappers;
+package com.data_processor.processor;
 
 import com.data_processor.enums.DeviceType;
 import com.data_processor.models.DeviceEvent;
@@ -6,9 +6,7 @@ import com.data_processor.models.DeviceEvent;
 public class TemperatureProcessor {
 
     public DeviceEvent process(final DeviceEvent deviceEvent) {
-        deviceEvent.readingUnit = deviceEvent.device.unit;
-
-        if (deviceEvent.device.type.equals(DeviceType.TEMPERATURE.toString())) {
+        if (deviceEvent.getDevice().getType().equals(DeviceType.TEMPERATURE.toString())) {
             this.mapTemperatureValueByUnit(deviceEvent);
         }
 
@@ -16,12 +14,14 @@ public class TemperatureProcessor {
     }
 
     private DeviceEvent mapTemperatureValueByUnit(final DeviceEvent deviceEvent) {
-        if (deviceEvent.device.unit.equals("K")) {
-            deviceEvent.value = this.mapKelvinToCelsius(deviceEvent.value);
+        deviceEvent.setReadingUnit("C");
+
+        if (deviceEvent.getDevice().getUnit().equals("K")) {
+            deviceEvent.setValue(this.mapKelvinToCelsius(deviceEvent.getValue()));
         }
 
-        if (deviceEvent.device.unit.equals("F")) {
-            deviceEvent.value = this.mapFahrenheitToCelsius(deviceEvent.value);
+        if (deviceEvent.getDevice().getUnit().equals("F")) {
+            deviceEvent.setValue(this.mapFahrenheitToCelsius(deviceEvent.getValue()));
         }
 
         return deviceEvent;
