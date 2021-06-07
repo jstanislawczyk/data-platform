@@ -198,7 +198,7 @@ export default {
     flex-wrap: wrap;
     align-content: space-around;
     justify-content: space-around;
-    width: 65%;
+    width: 70%;
 
     .chart {
       width: 45%;
