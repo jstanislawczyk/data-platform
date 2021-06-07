@@ -34,6 +34,10 @@
       </div>
 
       <div class="chart">
+        <line-chart :chart-data="temperatureChart2" :options="chartOptions"></line-chart>
+      </div>
+
+      <div class="chart">
         <line-chart :chart-data="humidityChart" :options="chartOptions"></line-chart>
       </div>
 
@@ -57,6 +61,7 @@ export default {
       message: 'Unknown',
       dataCollection: {},
       temperatureChart: {},
+      temperatureChart2: {},
       pressureChart: {},
       humidityChart: {},
       devices: new Map(),
@@ -116,7 +121,18 @@ export default {
           labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
           datasets: [
             {
-              label: `Temperature [${deviceEvent.readingUnit}]`,
+              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
+              backgroundColor: '#f87979',
+              data: readings.map(reading => Number(reading.value))
+            }
+          ]
+        }
+      } else if (deviceEvent.device.unit === 'F') {
+        this.temperatureChart2 = {
+          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
+          datasets: [
+            {
+              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
               backgroundColor: '#f87979',
               data: readings.map(reading => Number(reading.value))
             }
@@ -127,7 +143,7 @@ export default {
           labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
           datasets: [
             {
-              label: `Pressure [${deviceEvent.readingUnit}]`,
+              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
               backgroundColor: '#2bac59',
               data: readings.map(reading => Number(reading.value))
             }
@@ -138,7 +154,7 @@ export default {
           labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
           datasets: [
             {
-              label: `Humidity [${deviceEvent.readingUnit}]`,
+              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
               backgroundColor: '#3aa9b8',
               data: readings.map(reading => Number(reading.value))
             }
