@@ -29,20 +29,12 @@
     </section>
 
     <section class="chart-panel">
-      <div class="chart">
-        <line-chart :chart-data="temperatureChart" :options="chartOptions"></line-chart>
-      </div>
-
-      <div class="chart">
-        <line-chart :chart-data="temperatureChart2" :options="chartOptions"></line-chart>
-      </div>
-
-      <div class="chart">
-        <line-chart :chart-data="humidityChart" :options="chartOptions"></line-chart>
-      </div>
-
-      <div class="chart">
-        <line-chart :chart-data="pressureChart" :options="chartOptions"></line-chart>
+      <div
+        v-for="[deviceId, chart] in charts"
+        :key="deviceId"
+        class="chart"
+      >
+        <line-chart :chart-data="chart" :options="chartOptions"></line-chart>
       </div>
     </section>
   </main>
@@ -60,10 +52,7 @@ export default {
     return {
       message: 'Unknown',
       dataCollection: {},
-      temperatureChart: {},
-      temperatureChart2: {},
-      pressureChart: {},
-      humidityChart: {},
+      charts: new Map(),
       devices: new Map(),
       locations: new Map(),
       readings: new Map(),
@@ -100,67 +89,49 @@ export default {
     },
     addReadings (deviceEvent) {
       const deviceId = deviceEvent.device.id
-      const reading = {
+      const newReading = {
         id: deviceEvent.id,
         value: deviceEvent.value,
         readingUnit: deviceEvent.readingUnit,
         timestamp: deviceEvent.timestamp
       }
-
       const readings = this.readings.get(deviceId) || []
-      readings.push(reading)
+
+      readings.push(newReading)
       readings.sort((firstReading, secondReading) => firstReading.date - secondReading.date)
 
-      if (readings.length > 50) {
+      if (readings.length > 40) {
         readings.shift()
       }
 
       this.readings = new Map(this.readings.set(deviceId, readings))
-      if (deviceEvent.device.unit === 'C') {
-        this.temperatureChart = {
-          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
-          datasets: [
-            {
-              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
-              backgroundColor: '#f87979',
-              data: readings.map(reading => Number(reading.value))
-            }
-          ]
-        }
-      } else if (deviceEvent.device.unit === 'F') {
-        this.temperatureChart2 = {
-          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
-          datasets: [
-            {
-              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
-              backgroundColor: '#f87979',
-              data: readings.map(reading => Number(reading.value))
-            }
-          ]
-        }
-      } else if (deviceEvent.device.unit === 'hPa') {
-        this.pressureChart = {
-          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
-          datasets: [
-            {
-              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
-              backgroundColor: '#2bac59',
-              data: readings.map(reading => Number(reading.value))
-            }
-          ]
-        }
+
+      this.buildChart(deviceEvent, readings)
+    },
+    buildChart (deviceEvent, readings) {
+      let color
+
+      if (deviceEvent.device.type === 'TEMPERATURE') {
+        color = '#F87979'
+      } else if (deviceEvent.device.type === 'PRESSURE') {
+        color = '#2BAC59'
       } else {
-        this.humidityChart = {
-          labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
-          datasets: [
-            {
-              label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
-              backgroundColor: '#3aa9b8',
-              data: readings.map(reading => Number(reading.value))
-            }
-          ]
-        }
+        color = '#3AA9B8'
       }
+
+      this.initChart(deviceEvent, readings, color)
+    },
+    initChart (deviceEvent, readings, color = '#3AA9B8') {
+      this.charts.set(deviceEvent.device.id, {
+        labels: readings.map(reading => this.getFormattedTime(reading.timestamp)),
+        datasets: [
+          {
+            label: `${deviceEvent.device.name} [${deviceEvent.readingUnit}]`,
+            backgroundColor: color,
+            data: readings.map(reading => Number(reading.value))
+          }
+        ]
+      })
     },
     getFormattedTime (timestamp) {
       return new Date(timestamp).toTimeString().slice(0, 9)
