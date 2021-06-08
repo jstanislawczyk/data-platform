@@ -37,7 +37,7 @@ export const devices: Device[] = [
         id: '4',
         name: 'Termometr2',
         type: DeviceType.TEMPERATURE,
-        unit: 'C',
+        unit: 'F',
         macAddress: '00:1A:D6:3E:5E:F1',
         widthCoordinate: 10,
         lengthCoordinate: 30,

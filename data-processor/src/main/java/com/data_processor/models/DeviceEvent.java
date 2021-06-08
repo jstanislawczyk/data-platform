@@ -4,11 +4,11 @@ import java.util.Objects;
 
 public class DeviceEvent {
 
-    public String id;
-    public String value;
-    public String readingUnit;
-    public long timestamp;
-    public Device device;
+    private String id;
+    private String value;
+    private String readingUnit;
+    private long timestamp;
+    private Device device;
 
     public String getId() {
         return id;

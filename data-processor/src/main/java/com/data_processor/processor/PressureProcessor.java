@@ -1,4 +1,4 @@
-package com.data_processor.mappers;
+package com.data_processor.processor;
 
 import com.data_processor.enums.DeviceType;
 import com.data_processor.models.DeviceEvent;
@@ -6,9 +6,7 @@ import com.data_processor.models.DeviceEvent;
 public class PressureProcessor {
 
     public DeviceEvent process(final DeviceEvent deviceEvent) {
-        deviceEvent.readingUnit = deviceEvent.device.unit;
-
-        if (deviceEvent.device.type.equals(DeviceType.TEMPERATURE.toString())) {
+        if (deviceEvent.getDevice().getType().equals(DeviceType.PRESSURE.toString())) {
             this.mapPressureValueByUnit(deviceEvent);
         }
 
@@ -16,8 +14,10 @@ public class PressureProcessor {
     }
 
     private DeviceEvent mapPressureValueByUnit(final DeviceEvent deviceEvent) {
-        if (deviceEvent.device.unit.equals("atm")) {
-            deviceEvent.value = this.mapKelvinToHectoPascal(deviceEvent.value);
+        deviceEvent.setReadingUnit("hPa");
+
+        if (deviceEvent.getDevice().getUnit().equals("atm")) {
+            deviceEvent.setValue(this.mapKelvinToHectoPascal(deviceEvent.getValue()));
         }
 
         return deviceEvent;

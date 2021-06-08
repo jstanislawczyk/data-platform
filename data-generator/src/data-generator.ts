@@ -4,7 +4,6 @@ import {DeviceEvent} from './device-event';
 import {v4} from 'uuid';
 import {devices} from './devices';
 import {DeviceType} from './device-type';
-import {pressureUnits, temperatureUnits} from './units';
 
 export class DataGenerator {
 
@@ -60,8 +59,6 @@ export class DataGenerator {
     }
 
     private randomizeTemperatureDeviceEvent(deviceEvent: DeviceEvent): DeviceEvent {
-        deviceEvent.device.unit = temperatureUnits[~~(Math.random() * temperatureUnits.length)];
-
         switch (deviceEvent.device.unit) {
             case 'C':
                 deviceEvent.value = (Math.random() * (30 - 20) + 20).toFixed(1);
@@ -78,8 +75,6 @@ export class DataGenerator {
     }
 
     private randomizePressureDeviceEvent(deviceEvent: DeviceEvent): DeviceEvent {
-        deviceEvent.device.unit = pressureUnits[~~(Math.random() * pressureUnits.length)];
-
         switch (deviceEvent.device.unit) {
             case 'hPa':
                 deviceEvent.value = Math.floor(Math.random() * (1050 - 950) + 950).toString();
@@ -93,7 +88,7 @@ export class DataGenerator {
     }
 
     private randomizeHumidityDeviceEvent(deviceEvent: DeviceEvent): DeviceEvent {
-        deviceEvent.value = Math.floor(Math.random() * (60 - 10) + 10).toString();
+        deviceEvent.value = Math.floor(Math.random() * (40 - 10) + 10).toString();
 
         return deviceEvent;
     }

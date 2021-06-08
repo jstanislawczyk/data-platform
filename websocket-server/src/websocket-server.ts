@@ -33,7 +33,7 @@ export class WebsocketServer {
                 const message: Message = {
                     timestamp: Date.now(),
                     messageType: MessageType.EVENT,
-                    payload: JSON.stringify(incomingMessage),
+                    payload: incomingMessage,
                 };
 
                 console.log(`Sending new message: ${JSON.stringify(message)}`);
